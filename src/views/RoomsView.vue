@@ -15,10 +15,11 @@ import { rooms } from "@/data/rooms";
       </h1>
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <div
+        <RouterLink
           v-for="room in rooms"
           :key="room.id"
-          class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow"
+          :to="`/reservar/${room.id}`"
+          class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow block cursor-pointer"
         >
           <div class="relative">
             <img
@@ -62,7 +63,7 @@ import { rooms } from "@/data/rooms";
               </button>
             </div>
           </div>
-        </div>
+        </RouterLink>
       </div>
     </div>
   </main>
