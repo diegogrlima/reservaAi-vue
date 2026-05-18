@@ -1,6 +1,9 @@
 <script setup lang="ts">
+import HeaderComponent from "@/components/HeaderComponent.vue";
 </script>
 
 <template>
-  <h1 class="text-3xl font-bold">Home</h1>
+  <main>
+    <HeaderComponent />
+  </main>
 </template>
