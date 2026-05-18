@@ -52,7 +52,10 @@ function goBack() {
 <template>
   <HeaderComponent />
 
-  <main v-if="loading" class="min-h-screen bg-gray-50 flex items-center justify-center">
+  <main
+    v-if="loading"
+    class="min-h-screen bg-gray-50 flex items-center justify-center"
+  >
     <p class="text-slate-500 text-lg">Carregando detalhes do quarto...</p>
   </main>
 
@@ -114,19 +117,25 @@ function goBack() {
             :key="index"
             @click="currentImage = index"
             :class="[
-              'w-24 h-16 rounded-lg overflow-hidden flex-shrink-0 border-2 transition-colors',
+              'w-24 h-16 rounded-lg overflow-hidden shrink-0 border-2 transition-colors',
               currentImage === index
                 ? 'border-blue-600'
                 : 'border-transparent hover:border-slate-300',
             ]"
           >
-            <img :src="img" :alt="`${room.name} - Foto ${index + 1}`" class="w-full h-full object-cover" />
+            <img
+              :src="img"
+              :alt="`${room.name} - Foto ${index + 1}`"
+              class="w-full h-full object-cover"
+            />
           </button>
         </div>
 
         <!-- Content -->
         <div class="p-8">
-          <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-6 mb-8">
+          <div
+            class="flex flex-col md:flex-row md:items-start md:justify-between gap-6 mb-8"
+          >
             <div>
               <h1 class="text-3xl font-bold text-slate-900 mb-2">
                 {{ room.name }}
@@ -155,22 +164,22 @@ function goBack() {
           </div>
 
           <div class="mb-8">
-            <h2 class="text-xl font-bold text-slate-900 mb-4">
-              Comodidades
-            </h2>
+            <h2 class="text-xl font-bold text-slate-900 mb-4">Comodidades</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div
                 v-for="amenity in room.amenities"
                 :key="amenity"
                 class="flex items-center gap-3 text-slate-700"
               >
-                <Check :size="18" class="text-blue-600 flex-shrink-0" />
+                <Check :size="18" class="text-blue-600 shrink-0" />
                 <span>{{ amenity }}</span>
               </div>
             </div>
           </div>
 
-          <div class="flex flex-col sm:flex-row gap-4 pt-6 border-t border-slate-200">
+          <div
+            class="flex flex-col sm:flex-row gap-4 pt-6 border-t border-slate-200"
+          >
             <button
               class="flex-1 px-8 py-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold text-lg"
             >
