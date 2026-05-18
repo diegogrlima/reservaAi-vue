@@ -30,7 +30,7 @@ function closeMenu() {
             >
           </li>
           <li>
-            <a href="#como-funciona" class="hover:text-blue-600"
+            <a href="#howDoesItWork" class="hover:text-blue-600"
               >Como funciona</a
             >
           </li>
