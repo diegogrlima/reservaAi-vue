@@ -1,7 +1,7 @@
 import { api } from "./api";
 import type { Room } from "@/data/rooms";
 
-interface PageResponse<T> {
+export interface PageResponse<T> {
   content: T[];
   totalElements: number;
   totalPages: number;
@@ -9,9 +9,11 @@ interface PageResponse<T> {
   size: number;
 }
 
-export async function getAllRooms(): Promise<Room[]> {
-  const { data } = await api.get<PageResponse<Room>>("/rooms");
-  return data.content;
+export async function getAllRooms(page = 0, size = 6): Promise<PageResponse<Room>> {
+  const { data } = await api.get<PageResponse<Room>>("/rooms", {
+    params: { page, size },
+  });
+  return data;
 }
 
 export async function getRoomById(id: number): Promise<Room | undefined> {
