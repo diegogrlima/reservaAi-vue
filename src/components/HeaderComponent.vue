@@ -37,7 +37,7 @@ function closeMenu() {
           <li>
             <a href="#advantages" class="hover:text-blue-600">Benefícios</a>
           </li>
-          <li><a href="#contato" class="hover:text-blue-600">Contato</a></li>
+          <li><a href="#contact" class="hover:text-blue-600">Contato</a></li>
 
           <li>
             <RouterLink
