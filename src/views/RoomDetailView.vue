@@ -8,17 +8,29 @@ import {
   Check,
   ArrowLeft,
 } from "@lucide/vue";
-import { computed, ref } from "vue";
+import { computed, ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { rooms } from "@/data/rooms";
+import { getRoomById } from "@/services/roomService";
+import type { Room } from "@/data/rooms";
 
 const route = useRoute();
 const router = useRouter();
 
-const roomId = computed(() => Number(route.params.id));
-const room = computed(() => rooms.find((r) => r.id === roomId.value));
-
+const room = ref<Room | undefined>(undefined);
+const loading = ref(true);
 const currentImage = ref(0);
+
+const roomId = computed(() => Number(route.params.id));
+
+onMounted(async () => {
+  try {
+    room.value = await getRoomById(roomId.value);
+  } catch {
+    room.value = undefined;
+  } finally {
+    loading.value = false;
+  }
+});
 
 function prevImage() {
   if (!room.value) return;
@@ -40,7 +52,11 @@ function goBack() {
 <template>
   <HeaderComponent />
 
-  <main v-if="room" class="min-h-screen bg-gray-50 py-12 px-6">
+  <main v-if="loading" class="min-h-screen bg-gray-50 flex items-center justify-center">
+    <p class="text-slate-500 text-lg">Carregando detalhes do quarto...</p>
+  </main>
+
+  <main v-else-if="room" class="min-h-screen bg-gray-50 py-12 px-6">
     <div class="max-w-5xl mx-auto">
       <button
         @click="goBack"
@@ -87,7 +103,7 @@ function goBack() {
           <span
             class="absolute top-4 right-4 bg-blue-600 text-white text-sm font-semibold px-4 py-2 rounded-full"
           >
-            Quarto {{ room.number }}
+            Quarto {{ room.roomNumber }}
           </span>
         </div>
 
@@ -123,7 +139,7 @@ function goBack() {
 
             <div class="text-right">
               <span class="text-3xl font-bold text-blue-600">
-                R$ {{ room.price.toFixed(2).replace(".", ",") }}
+                R$ {{ room.dailyRate.toFixed(2).replace(".", ",") }}
               </span>
               <span class="text-slate-500 block text-sm">/noite</span>
             </div>

@@ -2,7 +2,22 @@
 import FooterComponent from "@/components/FooterComponent.vue";
 import HeaderComponent from "@/components/HeaderComponent.vue";
 import { Users } from "@lucide/vue";
-import { rooms } from "@/data/rooms";
+import { ref, onMounted } from "vue";
+import { getAllRooms } from "@/services/roomService";
+import type { Room } from "@/data/rooms";
+
+const rooms = ref<Room[]>([]);
+const loading = ref(true);
+
+onMounted(async () => {
+  try {
+    rooms.value = await getAllRooms();
+  } catch {
+    rooms.value = [];
+  } finally {
+    loading.value = false;
+  }
+});
 </script>
 
 <template>
@@ -14,7 +29,18 @@ import { rooms } from "@/data/rooms";
         Quartos Disponíveis
       </h1>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div v-if="loading" class="text-center py-12">
+        <p class="text-slate-500 text-lg">Carregando quartos...</p>
+      </div>
+
+      <div
+        v-else-if="rooms.length === 0"
+        class="text-center py-12"
+      >
+        <p class="text-slate-500 text-lg">Nenhum quarto disponível no momento.</p>
+      </div>
+
+      <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         <RouterLink
           v-for="room in rooms"
           :key="room.id"
@@ -30,7 +56,7 @@ import { rooms } from "@/data/rooms";
             <span
               class="absolute top-3 right-3 bg-blue-600 text-white text-sm font-semibold px-3 py-1 rounded-full"
             >
-              Quarto {{ room.number }}
+              Quarto {{ room.roomNumber }}
             </span>
           </div>
 
@@ -51,7 +77,7 @@ import { rooms } from "@/data/rooms";
             <div class="flex items-center justify-between">
               <div>
                 <span class="text-2xl font-bold text-blue-600">
-                  R$ {{ room.price.toFixed(2).replace(".", ",") }}
+                  R$ {{ room.dailyRate.toFixed(2).replace(".", ",") }}
                 </span>
                 <span class="text-slate-500 text-sm">/noite</span>
               </div>
