@@ -23,3 +23,9 @@ No test runner, linter, or formatter configured yet.
 - Vue SFCs use `<script setup lang="ts">`
 - TypeScript project references: `tsconfig.app.json` (app) + `tsconfig.node.json` (build tools)
 - `"type": "module"` in package.json — use ESM imports
+
+## Commits
+- Conventional Commits em português
+- Tipos: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`, `perf`
+- Ex: `feat: adicionar componente de navegação`
+- Mensagens curtas e objetivas, sem ponto final
