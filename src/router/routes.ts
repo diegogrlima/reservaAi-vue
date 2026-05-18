@@ -16,6 +16,11 @@ const routes: RouteRecordRaw[] = [
     name: "register",
     component: () => import("@/views/RegisterView.vue"),
   },
+  {
+    path: "/reservar",
+    name: "reservar",
+    component: () => import("@/views/RoomsView.vue"),
+  },
 ];
 
 export default routes;
