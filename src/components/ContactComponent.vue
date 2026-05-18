@@ -60,7 +60,7 @@ import { Mail, Phone, MapPin } from "@lucide/vue";
             </div>
 
             <div>
-              <p class="text-sm bg-blue-100">Localização</p>
+              <p class="text-sm text-slate-500">Localização</p>
 
               <p class="font-medium">Teresópolis, Rio de Janeiro</p>
             </div>
