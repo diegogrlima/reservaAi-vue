@@ -25,7 +25,9 @@ function closeMenu() {
       <nav class="hidden md:block">
         <ul class="flex items-center gap-6 text-sm font-medium text-slate-700">
           <li>
-            <RouterLink to="/" class="hover:text-blue-600">Início</RouterLink>
+            <RouterLink to="/" class="hover:text-blue-600" href="#home"
+              >Início</RouterLink
+            >
           </li>
           <li>
             <a href="#como-funciona" class="hover:text-blue-600"
