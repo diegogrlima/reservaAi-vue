@@ -11,7 +11,7 @@ import {
 import { computed, ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { getRoomById } from "@/services/roomService";
-import type { Room } from "@/data/rooms";
+import type { Room } from "@/services/roomService";
 
 const route = useRoute();
 const router = useRouter();
