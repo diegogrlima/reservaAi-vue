@@ -1,5 +1,4 @@
 import { api } from "./api";
-import type { Room } from "@/data/rooms";
 
 export interface PageResponse<T> {
   content: T[];
@@ -7,6 +6,20 @@ export interface PageResponse<T> {
   totalPages: number;
   number: number;
   size: number;
+}
+
+export interface Room {
+  id: number;
+  roomNumber: string;
+  roomType: string;
+  dailyRate: number;
+  name: string;
+  description: string;
+  fullDescription: string;
+  image: string;
+  gallery: string[];
+  capacity: number;
+  amenities: string[];
 }
 
 export async function getAllRooms(page = 0, size = 6): Promise<PageResponse<Room>> {

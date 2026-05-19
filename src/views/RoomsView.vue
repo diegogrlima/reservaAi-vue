@@ -4,7 +4,7 @@ import HeaderComponent from "@/components/HeaderComponent.vue";
 import { Users, ChevronLeft, ChevronRight } from "@lucide/vue";
 import { ref, onMounted, computed } from "vue";
 import { getAllRooms } from "@/services/roomService";
-import type { Room } from "@/data/rooms";
+import type { Room } from "@/services/roomService";
 
 const rooms = ref<Room[]>([]);
 const loading = ref(true);
