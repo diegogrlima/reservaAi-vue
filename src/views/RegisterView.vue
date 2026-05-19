@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/zod";
+import axios from "axios";
 import { useForm } from "vee-validate";
-import { RouterLink } from "vue-router";
+import { ref } from "vue";
+import { RouterLink, useRouter } from "vue-router";
 import * as z from "zod";
+import { createUser } from "@/services/authService";
 
 const schema = toTypedSchema(
   z
@@ -22,13 +25,37 @@ const { defineField, handleSubmit, errors } = useForm({
   validationSchema: schema,
 });
 
+const router = useRouter();
+const isLoading = ref(false);
+const submitError = ref("");
+
 const [name, nameAttrs] = defineField("name");
 const [email, emailAttrs] = defineField("email");
 const [password, passwordAttrs] = defineField("password");
 const [confirmPassword, confirmPasswordAttrs] = defineField("confirmPassword");
 
-const onSubmit = handleSubmit((values) => {
-  console.log(values);
+const onSubmit = handleSubmit(async (values) => {
+  submitError.value = "";
+  isLoading.value = true;
+
+  try {
+    await createUser({
+      name: values.name,
+      email: values.email,
+      password: values.password,
+    });
+
+    await router.push({ path: "/login", query: { registered: "1" } });
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response?.status === 409) {
+      submitError.value = "Este e-mail já está cadastrado.";
+      return;
+    }
+
+    submitError.value = "Não foi possível criar a conta. Tente novamente.";
+  } finally {
+    isLoading.value = false;
+  }
 });
 </script>
 
@@ -45,6 +72,13 @@ const onSubmit = handleSubmit((values) => {
       </div>
 
       <form class="space-y-6" @submit="onSubmit">
+        <p
+          v-if="submitError"
+          class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600"
+        >
+          {{ submitError }}
+        </p>
+
         <div>
           <label class="mb-2 block text-sm font-medium text-slate-600">
             Nome
@@ -111,9 +145,10 @@ const onSubmit = handleSubmit((values) => {
 
         <button
           type="submit"
-          class="w-full rounded-xl bg-blue-600 px-6 py-4 font-semibold text-white transition hover:bg-blue-700"
+          :disabled="isLoading"
+          class="w-full rounded-xl bg-blue-600 px-6 py-4 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-300"
         >
-          Criar conta
+          {{ isLoading ? "Criando conta..." : "Criar conta" }}
         </button>
       </form>
 

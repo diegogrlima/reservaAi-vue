@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/zod";
+import axios from "axios";
 import { useForm } from "vee-validate";
-import { RouterLink } from "vue-router";
+import { computed, ref } from "vue";
+import { RouterLink, useRoute, useRouter } from "vue-router";
 import * as z from "zod";
+import { login } from "@/services/authService";
 
 const schema = toTypedSchema(
   z.object({
@@ -15,11 +18,35 @@ const { defineField, handleSubmit, errors } = useForm({
   validationSchema: schema,
 });
 
+const router = useRouter();
+const route = useRoute();
+const isLoading = ref(false);
+const submitError = ref("");
+
+const successMessage = computed(() => (
+  route.query.registered === "1" ? "Conta criada com sucesso. Faça login para continuar." : ""
+));
+
 const [email, emailAttrs] = defineField("email");
 const [password, passwordAttrs] = defineField("password");
 
-const onSubmit = handleSubmit((values) => {
-  console.log(values);
+const onSubmit = handleSubmit(async (values) => {
+  submitError.value = "";
+  isLoading.value = true;
+
+  try {
+    await login(values);
+    await router.push("/reservar");
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response?.status === 401) {
+      submitError.value = "E-mail ou senha inválidos.";
+      return;
+    }
+
+    submitError.value = "Não foi possível entrar. Tente novamente.";
+  } finally {
+    isLoading.value = false;
+  }
 });
 </script>
 
@@ -36,6 +63,20 @@ const onSubmit = handleSubmit((values) => {
       </div>
 
       <form class="space-y-6" @submit="onSubmit">
+        <p
+          v-if="successMessage"
+          class="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700"
+        >
+          {{ successMessage }}
+        </p>
+
+        <p
+          v-if="submitError"
+          class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600"
+        >
+          {{ submitError }}
+        </p>
+
         <div>
           <label class="mb-2 block text-sm font-medium text-slate-600">
             E-mail
@@ -70,9 +111,10 @@ const onSubmit = handleSubmit((values) => {
 
         <button
           type="submit"
-          class="w-full rounded-xl bg-blue-600 px-6 py-4 font-semibold text-white transition hover:bg-blue-700"
+          :disabled="isLoading"
+          class="w-full rounded-xl bg-blue-600 px-6 py-4 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-300"
         >
-          Entrar
+          {{ isLoading ? "Entrando..." : "Entrar" }}
         </button>
       </form>
 

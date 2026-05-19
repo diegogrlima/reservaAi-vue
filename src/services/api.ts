@@ -6,3 +6,10 @@ export const api = axios.create({
     "Content-Type": "application/json",
   },
 });
+
+const token = localStorage.getItem("reservaai:token");
+const tokenType = localStorage.getItem("reservaai:tokenType") ?? "Bearer";
+
+if (token) {
+  api.defaults.headers.common.Authorization = `${tokenType} ${token}`;
+}
