@@ -11,6 +11,7 @@ import {
 import { computed, ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { getRoomById } from "@/services/roomService";
+import { getStoredUser } from "@/services/authService";
 import type { Room } from "@/services/roomService";
 
 const route = useRoute();
@@ -46,6 +47,22 @@ function nextImage() {
 
 function goBack() {
   router.push("/reservar");
+}
+
+function goToBooking() {
+  if (!room.value) return;
+
+  const bookingPath = `/reservar/${room.value.id}/reserva`;
+
+  if (!getStoredUser()) {
+    router.push({
+      path: "/login",
+      query: { redirect: bookingPath },
+    });
+    return;
+  }
+
+  router.push(bookingPath);
 }
 </script>
 
@@ -181,7 +198,9 @@ function goBack() {
             class="flex flex-col sm:flex-row gap-4 pt-6 border-t border-slate-200"
           >
             <button
+              type="button"
               class="flex-1 px-8 py-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold text-lg"
+              @click="goToBooking"
             >
               Reservar agora
             </button>
