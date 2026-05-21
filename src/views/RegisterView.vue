@@ -6,6 +6,7 @@ import { ref } from "vue";
 import { RouterLink, useRouter } from "vue-router";
 import * as z from "zod";
 import { createUser } from "@/services/authService";
+import type { RegisterFormValues } from "@/interfaces/registerFormValues";
 
 const schema = toTypedSchema(
   z
@@ -18,7 +19,7 @@ const schema = toTypedSchema(
     .refine((data) => data.password === data.confirmPassword, {
       message: "As senhas não coincidem",
       path: ["confirmPassword"],
-    })
+    }),
 );
 
 const { defineField, handleSubmit, errors } = useForm({
@@ -34,25 +35,26 @@ const [email, emailAttrs] = defineField("email");
 const [password, passwordAttrs] = defineField("password");
 const [confirmPassword, confirmPasswordAttrs] = defineField("confirmPassword");
 
+async function registerUser(values: RegisterFormValues): Promise<void> {
+  await createUser({
+    name: values.name,
+    email: values.email,
+    password: values.password,
+  });
+}
+
 const onSubmit = handleSubmit(async (values) => {
   submitError.value = "";
   isLoading.value = true;
 
   try {
-    await createUser({
-      name: values.name,
-      email: values.email,
-      password: values.password,
-    });
-
+    await registerUser(values);
     await router.push({ path: "/login", query: { registered: "1" } });
   } catch (error) {
-    if (axios.isAxiosError(error) && error.response?.status === 409) {
-      submitError.value = "Este e-mail já está cadastrado.";
-      return;
-    }
-
-    submitError.value = "Não foi possível criar a conta. Tente novamente.";
+    submitError.value =
+      axios.isAxiosError(error) && error.response?.status === 409
+        ? "Este e-mail já está cadastrado."
+        : "Não foi possível criar a conta. Tente novamente.";
   } finally {
     isLoading.value = false;
   }
@@ -60,15 +62,17 @@ const onSubmit = handleSubmit(async (values) => {
 </script>
 
 <template>
-  <section class="flex min-h-screen items-center justify-center bg-stone-100 px-6 py-24">
-    <div class="w-full max-w-md rounded-3xl border border-stone-200 bg-white p-8 shadow-sm">
+  <section
+    class="flex min-h-screen items-center justify-center bg-stone-100 px-6 py-24"
+  >
+    <div
+      class="w-full max-w-md rounded-3xl border border-stone-200 bg-white p-8 shadow-sm"
+    >
       <div class="mb-8 text-center">
         <RouterLink to="/" class="text-3xl font-bold text-slate-900">
           Reserva<span class="text-blue-600">AI</span>
         </RouterLink>
-        <p class="mt-3 text-slate-600">
-          Crie sua conta para começar
-        </p>
+        <p class="mt-3 text-slate-600">Crie sua conta para começar</p>
       </div>
 
       <form class="space-y-6" @submit="onSubmit">
