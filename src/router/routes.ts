@@ -26,6 +26,11 @@ const routes: RouteRecordRaw[] = [
     name: "room-detail",
     component: () => import("@/views/RoomDetailView.vue"),
   },
+  {
+    path: "/perfil",
+    name: "profile",
+    component: () => import("@/views/ProfileView.vue"),
+  },
 ];
 
 export default routes;
