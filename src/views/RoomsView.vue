@@ -3,9 +3,12 @@ import FooterComponent from "@/components/FooterComponent.vue";
 import HeaderComponent from "@/components/HeaderComponent.vue";
 import { Users, ChevronLeft, ChevronRight } from "@lucide/vue";
 import { ref, onMounted, computed } from "vue";
-import { getAllRooms } from "@/services/roomService";
+import { useRouter } from "vue-router";
+import { getStoredUser } from "@/services/authService";
+import { getAvailableRooms } from "@/services/roomService";
 import type { Room } from "@/services/roomService";
 
+const router = useRouter();
 const rooms = ref<Room[]>([]);
 const loading = ref(true);
 const currentPage = ref(0);
@@ -20,7 +23,7 @@ const pages = computed(() => {
 async function fetchRooms(page: number) {
   loading.value = true;
   try {
-    const response = await getAllRooms(page, pageSize);
+    const response = await getAvailableRooms(page, pageSize);
     rooms.value = response.content;
     currentPage.value = response.number;
     totalPages.value = response.totalPages;
@@ -37,6 +40,20 @@ function goToPage(page: number) {
   if (page >= 0 && page < totalPages.value) {
     fetchRooms(page);
   }
+}
+
+function goToBooking(roomId: number) {
+  const bookingPath = `/reservar/${roomId}/reserva`;
+
+  if (!getStoredUser()) {
+    router.push({
+      path: "/login",
+      query: { redirect: bookingPath },
+    });
+    return;
+  }
+
+  router.push(bookingPath);
 }
 
 onMounted(() => {
@@ -65,13 +82,12 @@ onMounted(() => {
 
       <div v-else>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          <RouterLink
+          <article
             v-for="room in rooms"
             :key="room.id"
-            :to="`/reservar/${room.id}`"
-            class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow block cursor-pointer"
+            class="overflow-hidden rounded-xl bg-white shadow-md transition-shadow hover:shadow-lg"
           >
-            <div class="relative">
+            <RouterLink :to="`/reservar/${room.id}`" class="relative block">
               <img
                 :src="room.image"
                 :alt="room.name"
@@ -82,12 +98,14 @@ onMounted(() => {
               >
                 Quarto {{ room.roomNumber }}
               </span>
-            </div>
+            </RouterLink>
 
             <div class="p-6">
-              <h2 class="text-xl font-bold text-slate-900 mb-2">
-                {{ room.name }}
-              </h2>
+              <RouterLink :to="`/reservar/${room.id}`" class="block">
+                <h2 class="text-xl font-bold text-slate-900 mb-2 hover:text-blue-600">
+                  {{ room.name }}
+                </h2>
+              </RouterLink>
 
               <p class="text-slate-600 text-sm mb-4">
                 {{ room.description }}
@@ -107,13 +125,15 @@ onMounted(() => {
                 </div>
 
                 <button
+                  type="button"
                   class="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
+                  @click="goToBooking(room.id)"
                 >
                   Reservar
                 </button>
               </div>
             </div>
-          </RouterLink>
+          </article>
         </div>
 
         <div class="flex items-center justify-center gap-2 mt-12">

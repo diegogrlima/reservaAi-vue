@@ -36,7 +36,11 @@ const onSubmit = handleSubmit(async (values) => {
 
   try {
     await login(values);
-    await router.push("/reservar");
+    const redirectPath = typeof route.query.redirect === "string"
+      ? route.query.redirect
+      : "/reservar";
+
+    await router.push(redirectPath);
   } catch (error) {
     if (axios.isAxiosError(error) && error.response?.status === 401) {
       submitError.value = "E-mail ou senha inválidos.";
