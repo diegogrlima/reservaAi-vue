@@ -38,7 +38,9 @@ export async function getRoomById(id: number): Promise<Room | undefined> {
   }
 }
 
-export async function getAvailableRooms(): Promise<Room[]> {
-  const { data } = await api.get<PageResponse<Room>>("/rooms/available");
-  return data.content;
+export async function getAvailableRooms(page = 0, size = 6): Promise<PageResponse<Room>> {
+  const { data } = await api.get<PageResponse<Room>>("/rooms/available", {
+    params: { page, size },
+  });
+  return data;
 }
